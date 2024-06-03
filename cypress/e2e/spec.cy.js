@@ -2,8 +2,8 @@ describe("LinkedIn Job Application Form", () => { // Describing the test suite f
   it("passes", () => { // Describing the test case
     cy.session("login", () => { // Creating a login session
       cy.visit("https://www.linkedin.com/login"); // Visiting LinkedIn login page
-      cy.get("#username").type("srikanthprabha62@gmail.com"); // Typing username
-      cy.get("#password").type("Rajan@91 {Enter}").wait(5000); // Typing password and submitting
+      cy.get("#username").type("Enter email"); // Typing username
+      cy.get("#password").type("Enter password {Enter}").wait(5000); // Typing password and submitting
     });
     cy.wait(5000); // Waiting for 5 seconds
     cy.visit("https://www.linkedin.com"); // Visiting LinkedIn homepage
