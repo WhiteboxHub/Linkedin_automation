@@ -2,8 +2,8 @@ describe("LinkedIn Job Application Form", () => {
   before(() => {
     cy.session("login", () => {
       cy.visit("https://www.linkedin.com/login");
-      cy.get("#username").type("Enter email@gmail.com");
-      cy.get("#password").type("Enter Password {Enter}");
+      cy.get("#username").type("shivapatel001k@gmail.com");
+      cy.get("#password").type("143Shivak@ {Enter}");
       cy.wait(5000);
     });
   });
@@ -40,60 +40,79 @@ describe("LinkedIn Job Application Form", () => {
 
     cy.get("body").then(($body) => {
       if ($body.find(".artdeco-text-input--input").length > 0) {
-        cy.get(".artdeco-text-input--input").first().click().wait(5000);
+        cy.get(".artdeco-text-input--input")
+          .first()
+          .click()
+          .clear()
+          .type("9876543210")
+          .wait(5000);
       } else {
         cy.get(".artdeco-text-input--input").eq(2).click().wait(5000);
       }
     });
 
     cy.get(".artdeco-button--primary").first().scrollIntoView().click();
-    cy.wait(6000);
+    cy.wait(3000);
     cy.get(".artdeco-button--primary").first().click();
 
+    cy.wait(3000);
 
-    
+    // radio button
+    // cy.get('label[data-test-text-selectable-option__label="Yes"]').each(($label) => {
+    //   const forValue = $label.attr('for');
+    //   const escapedForValue = Cypress.$.escapeSelector(forValue); // Escape special characters in ID
+    //   cy.get(`#${escapedForValue}`).click({ force: true });
+    // });
 
+    // Check and interact with radio buttons
+    cy.get("label[data-test-text-selectable-option__label]").each(($label) => {
+      const labelText = $label.text().toLowerCase();
+      const forValue = $label.attr("for");
+      const escapedForValue = Cypress.$.escapeSelector(forValue); // Escape special characters in ID
 
-// Click the "Yes" radio button directly
-// cy.get('[data-test-text-selectable-option="0"] > .t-14')
-//   .click();
+      if (labelText.includes("disability")) {
+        cy.get(`#${escapedForValue}[value="no"]`).click({ force: true });
+      } else {
+        cy.get(`#${escapedForValue}[value="yes"]`).click({ force: true });
+      }
+    });
 
-cy.get('select[data-test-text-entity-list-form-select]').then(selectElement => {
-  const isDisabilityQuestion = selectElement.text().includes("disability");
+    // Input field interaction
+    cy.get(".artdeco-text-input--input").each(($input) => {
+      cy.wrap($input).clear().type("4");
+    });
 
-  if (isDisabilityQuestion) {
-      cy.get('[data-test-text-selectable-option="1"] > .t-14').click(); // Click option 1 for disability question
-  } else {
-      cy.get('[data-test-text-selectable-option="0"] > .t-14').click(); // Click option 0 for non-disability question
-  }
-});
+    // Check if dropdown exists and handle it
+    cy.get('[data-test-text-selectable-option="0"] > .t-14').then(
+      (dropdown) => {
+        if (dropdown.length === 1) {
+          dropdown.click(); // Click on dropdown option
+          cy.get("select[data-test-text-entity-list-form-select]").each(
+            ($select) => {
+              const isDisabilityQuestion = $select
+                .text()
+                .includes("disability");
+              if (isDisabilityQuestion) {
+                cy.wrap($select).select("No"); // Select "No" for disability question
+              } else {
+                cy.wrap($select).select("Yes"); // Select "Yes" for non-disability question
+              }
+            }
+          );
+        }
+      }
+    );
 
+    // Assertion to verify selections
+    cy.get('label[data-test-text-selectable-option__label="Yes"]').should(
+      "be.visible"
+    );
+    cy.get("select[data-test-text-entity-list-form-select]").should(
+      "be.visible"
+    );
+    cy.get(".artdeco-text-input--input").should("have.value", "4");
 
-
-
-  // dropdown
-cy.get('select[data-test-text-entity-list-form-select]').then(selectElement => {
-  const isDisabilityQuestion = selectElement.text().includes("disability");
-
-  if (isDisabilityQuestion) {
-      cy.wrap(selectElement).select("No"); // Select "No" for disability question
-  } else {
-      cy.wrap(selectElement).select("Yes"); // Select "Yes" for non-disability question
-  }
-});
-
-// input fi
-cy.get(".artdeco-text-input--input").each(($input) => {
-  cy.wrap($input).clear().type("4");
-});
-
-  
-  
-  
- 
-  
-
-    cy.wait(5000);
+    cy.wait(20000);
 
     cy.get('button:contains("Review"), button:contains("Next")')
       .first()
@@ -109,20 +128,3 @@ cy.get(".artdeco-text-input--input").each(($input) => {
       });
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
