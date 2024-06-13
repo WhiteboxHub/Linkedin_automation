@@ -2,8 +2,8 @@ describe("LinkedIn Job Application Form", () => {
   before(() => {
     cy.session("login", () => {
       cy.visit("https://www.linkedin.com/login");
-      cy.get("#username").type("shivapatel001k@gmail.com");
-      cy.get("#password").type("143Shivak@ {Enter}");
+      cy.get("#username").type("enter email");
+      cy.get("#password").type("enter password {Enter}");
       cy.wait(5000);
     });
   });
